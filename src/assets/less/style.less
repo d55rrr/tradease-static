@@ -1,0 +1,921 @@
+@btnClolor: url("../img/topbg.gif");
+@fontColor: #d6e8f1;
+@borderColor: #B7D5DF;
+@backColor: #F0F9FD;
+@borderCon: #67A7BC;
+@elButonColorY: #409EFF;
+@elButonColorN: #adadad;
+@elButonColorYactive: #3183DB;
+@elButonColorNactive: #8B8B8B;
+@elButonColor1: #409EFF;
+@elButonColor1active: #3183DB;
+@elButonColor2: #67c23a;
+@elButonColor2active: #468B24;
+@elButonColor3: #f56c6c;
+@elButonColor3active: #C64848;
+@elButonColor4: #e6a23c;
+@elButonColor4active: #BC8127;
+@tableRowBack: #F5F5F5;
+@btnMargin: 5px;
+.conpadding1() {
+  padding: 20px 20px 20px 20px;
+  max-width: 1200px;
+}
+
+.conpadding2() {
+  padding: 20px 20px; // max-width: 1000px;
+}
+
+@fontColorblack: rgb(15,
+15,
+15);
+@btnHover: rgba(255,
+255,
+255,
+0.2);
+/*.el-table th {
+  background: @tableRowBack;
+}*/
+
+.el-table th,
+.el-table td {
+  text-align: center !important;
+}
+
+//字体对齐
+.inlineBlock {
+  display: inline-block;
+  //width: 55px;
+  width: 69px;
+  text-align: right;
+}
+
+//table设置
+.tableRowBack {
+  background: @tableRowBack !important;
+}
+
+//面包屑设置
+#index .el-breadcrumb {
+  position: absolute;
+  margin-top: 18px;
+  margin-left: 45px;
+  font-size: 0.8rem;
+  .el-breadcrumb__separator {
+    font-size: 0.4rem;
+  }
+  &__separator {
+    margin: 0 5px;
+  }
+}
+
+//textarea样式修改
+.el-textarea__inner {
+  margin-top: 10px;
+  height: 130px;
+  border: 1px solid #adadad;
+  font-size: 0.85rem;
+}
+
+//element表格设置
+.el-table td, .el-table th {
+  padding: 5px;
+  font-size: 0.85rem;
+}
+
+.el-checkbox__inner {
+  border: 1px solid @elButonColorN;
+}
+
+.elButonColor1 {
+  background-color: @elButonColor1;
+  &:active {
+    background-color: @elButonColor1active;
+  }
+}
+
+.elButonColor2 {
+  background-color: @elButonColor2;
+  &:active {
+    background-color: @elButonColor2active;
+  }
+}
+
+.elButonColor3 {
+  background-color: @elButonColor3;
+  &:active {
+    background-color: @elButonColor3active;
+  }
+}
+
+.elButonColor4 {
+  background-color: @elButonColor4;
+  &:active {
+    background-color: @elButonColor4active;
+  }
+}
+
+.activeColor {
+  background-image: url(../img/navbg.png);
+  background-size: 100% 100%;
+}
+
+#index {
+  .index_Nav {
+    width: 100%;
+    height: 88px;
+    background: @btnClolor;
+
+    &_middle {
+      float: left;
+      margin-left: 289px;
+      height: 88px;
+      width: fit-content;
+      &_list {
+        height: 100%;
+        padding-left: 2%;
+        width: max-content;
+        overflow-y: hidden;
+        overflow-x: auto;
+        & div {
+          float: left;
+          height: 100%;
+          width: 88px; // padding-top: 5px;
+          text-align: center;
+          cursor: pointer; // background: blue;
+          transition: background 0.7s;
+          -moz-transition: background 0.7s;
+          /* Firefox 4 */
+          -webkit-transition: background 0.7s;
+          /* Safari 和 Chrome */
+          -o-transition: background 0.7s;
+          /* Opera */
+          & img {
+            margin-top: 5px;
+            width: 50px;
+            height: 50px;
+          }
+          & p {
+            font-size: 14px;
+            margin-top: -3px;
+            color: @fontColor;
+          }
+        }
+        & div:hover {
+          background: @btnHover;
+        }
+      }
+    }
+    &_right {
+      float: right;
+      right: 0;
+      height: 88px;
+      width: 167px;
+      z-index: 0;
+      background: url(../img/topright.jpg);
+      background-size: 100% 100%;
+      &_topright {
+        & ul {
+          float: left;
+          width: 100%;
+          padding-top: 15px;
+          font-size: 0.84rem;
+          & li {
+            color: #FFFFFF;
+            float: left;
+            width: 25%;
+            text-align: center;
+            cursor: pointer;
+            &:first-child {
+              &:before {
+                content: url("../img/help.png");
+                position: absolute;
+                margin: 1.5px 0 0 -20px;
+              }
+            }
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+        &_usermsg {
+          position: absolute;
+          top: 45px;
+          right: 26px;
+          padding: 0 5px 0 30px;
+          background: rgba(8, 75, 111, 0.6);
+          height: 30px;
+          min-width: 120px;
+          //width: 175px;
+          border-radius: 20px;
+          line-height: 30px;
+          color: #FFFFFF;
+          & span {
+            display: inline-block;
+            margin-right: 13px;
+          }
+          & img {
+            position: absolute;
+            margin: 9px 0 0 -20px;
+          }
+          & i {
+            display: inline-block;
+            font-style: initial;
+            margin-right: 13px;
+          }
+          & .mark {
+            display: inline-flex;
+            margin-bottom: 2px;
+            & .el-badge__content {
+              border: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+  .index_Con {
+    width: 100%;
+    &_left {
+      position: absolute;
+      top: 88px;
+      width: 185px;
+      height: -webkit-calc(100% - 88px);
+      height: -moz-calc(100% - 88px);
+      height: calc(100% - 88px);
+      background: @backColor;
+      border-right: 1px solid @borderColor;
+      &_top_text {
+        height: 39px;
+        width: 100%;
+        font-size: 14px;
+        color: #FFFFFF;
+        border-right: 1px solid rgb(43, 119, 160);
+        border-bottom: 1px solid rgb(27, 104, 146);
+        line-height: 40px;
+        text-align: left;
+        background: #3994C7;
+        & span {
+          position: absolute;
+          left: 40px;
+        }
+        & span:before {
+          content: '';
+          width: 20px;
+          height: 20px;
+          position: absolute;
+          margin: 10px 0 0 -30px;
+          background: url('../img/leftico.png') no-repeat;
+        }
+      }
+      &_con_nav {
+        width: 100%;
+      }
+    }
+    &_right {
+      position: absolute;
+      top: 88px;
+      left: 186px; // background: #FFFFFF;
+      width: -webkit-calc(100% - 186px);
+      width: -moz-calc(100% - 186px);
+      width: calc(100% - 186px);
+      height: 860px; // height: -webkit-calc(100% - 88px);
+      // height: -moz-calc(100% - 88px);
+      // height: calc(100% - 88px);
+      &_top {
+        // width: -webkit-calc(100% - 20px);
+        // width: -moz-calc(100% - 20px);
+        // width: calc(100% - 20px);
+        height: 39px;
+        font-size: 0.75rem;
+        line-height: 40px;
+        padding-left: 10px;
+        background: #EDF6FA;
+        border-left: 4px solid #67D100;
+        border-bottom: 1px solid @borderColor;
+        &_titext {
+          position: absolute;
+          padding: 3px 0 0 0;
+        }
+        & p {
+          & span:first-child {
+            color: #000000;
+            font-weight: 600;
+          }
+          & span {
+            cursor: pointer;
+          }
+        }
+      }
+      &_con {
+        width: -webkit-calc(100% - 20px);
+        width: -moz-calc(100% - 20px);
+        width: calc(100% - 20px);
+        max-height: 800px;
+        //min-height: 500px;
+        overflow-y: auto;
+        float: left;
+        padding: 10px 10px;
+        font-size: 0.75rem; // background: #EDF6FA;
+        &_row {
+          & > div {
+            font-size: 0.9rem;
+            border: 1px solid @borderColor
+          }
+          &_tit {
+            text-align: center;
+            height: 30px;
+            padding: 0 5px;
+            line-height: 30px;
+            border-bottom: 1px solid @borderColor;
+            background: @backColor;
+            & i {
+              float: right;
+              font-size: 0.7rem;
+              color: #3998D3;
+              font-style: inherit;
+              cursor: pointer;
+            }
+          }
+          &_con {
+            padding: 8px 10px;
+            min-height: 100px;
+            & p {
+              font-size: 0.8rem;
+              line-height: 22px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+          }
+        }
+      }
+    }
+  }
+  // 用户管理样式
+  //input设置
+  .el-row .el-input {
+    width: initial;
+
+  }
+  .el-select--mini .el-input--mini .el-input__inner {
+    height: 29px;
+    width: 80px;
+    font-size: 0.8rem;
+
+    border: 1px solid @elButonColorN;
+  }
+  .el-input__icon {
+    line-height: 30px;
+  }
+  //禁用input设置
+  .el-input.is-disabled .el-input__inner {
+    color: #929292 !important;
+  }
+  //select设置
+  .el-select-dropdown__empty {
+    padding: 5px 0;
+    font-size: 0.8rem;
+  }
+  // 分页设置
+  //row设置
+  .el-row {
+    padding-bottom: 25px;
+  }
+  .el-row:last-child {
+    padding-bottom: 0;
+  }
+  .demo-input-suffix {
+    font-size: 0.8rem;
+  }
+  //button设置
+  .el-button {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+  #addUser {
+    border: 1px solid @borderCon;
+    .addUser_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+    }
+  }
+  #addPost {
+    border: 1px solid @borderCon;
+    .addPost_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+    }
+  }
+  #editUser{
+    border: 1px solid @borderCon;
+    .editUser_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+    }
+  }
+  #menuList{
+    border: 1px solid @borderCon;
+    .menuList_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+    }
+  }
+  #editdictionar {
+    border: 1px solid @borderCon;
+    .editdictionar_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+    }
+  }
+  #adddictionar {
+    border: 1px solid @borderCon;
+    .adddictionar_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+    }
+  }
+  #projectPost {
+    border: 1px solid @borderCon;
+    .projectPost_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+    }
+  }
+  #lookproduct {
+    border: 1px solid @borderCon;
+    .lookproduct_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+    }
+  }
+
+  #editproduct{
+    border: 1px solid @borderCon;
+    .editproduct_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+    }
+  }
+  #addproduct {
+    border: 1px solid @borderCon;
+    .addproduct_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+    }
+  }
+  #addRole {
+    border: 1px solid @borderCon;
+    .addRole_Con {
+      .conpadding1();
+      &_btn {
+        //margin-top: @btnMargin;
+      }
+    }
+  }
+  #department {
+    border: 1px solid @borderCon;
+    height: 100%;
+    .department_Con {
+      //.conpadding1();
+      padding: 20px 20px 0 20px;
+      max-width: 1200px;
+      &_btn {
+        margin-top: @btnMargin;
+      }
+      .departmentcon {
+        width: 100%;
+        height: 400px;
+        &_left {
+          width: 50%;
+          height: 100%;
+          border-right: 1px solid @borderCon;
+          padding: 0 30px 0 10px;
+          float: left;
+          //overflow-y: auto;
+          &_btn {
+            padding: 0 0 10px 0;
+            border-bottom: 1px solid @borderCon;
+          }
+        }
+        &_right {
+          width: 50%;
+          height: 100%;
+          padding: 50px 0 0 50px;
+          float: left;
+        }
+
+      }
+    }
+  }
+
+  #organization {
+    border: 1px solid @borderCon;
+    .organization_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+    }
+  }
+  #editUser {
+    border: 1px solid @borderCon;
+    .editUser_Con {
+      .conpadding1();
+      &_btn {
+        //margin-top: @btnMargin;
+      }
+    }
+  }
+  #editPost {
+    border: 1px solid @borderCon;
+    .editPost_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+    }
+  }
+  .permissionmoreActive {
+    background: #D4E7F0;
+  }
+  #permissionmore {
+    border: 1px solid @borderCon;
+    .permissionmore_Con {
+      .conpadding1();
+      &_tit {
+        font-size: 0.8rem;
+
+        &_text {
+          margin-bottom: 5px;
+        }
+        &_con {
+          border: 1px solid @borderCon;
+          padding: 5px 0;
+          width: 350px;
+          height: 160px;
+          //overflow-y: auto;
+          & p {
+            padding: 5px 10px;
+            cursor: pointer;
+          }
+          .el-checkbox-group {
+            label {
+              width: -webkit-fill-available;
+              width: -moz-fill-available;
+              width: -moz-available; /* FireFox目前这个生效 */
+              width: fill-available;
+              height: 25px !important;
+              border-bottom: 1px solid #EAEAEA;
+              margin-left: 0px !important;
+              padding: 5px 0 0 10px;
+            }
+          }
+        }
+      }
+      &_user {
+        font-size: 0.8rem;
+        &_text {
+          margin-top: 20px;
+          margin-bottom: 5px;
+        }
+        &_con {
+          border: 1px solid @borderCon;
+          padding: 15px;
+          width: 600px;
+          height: 200px;
+          overflow-y: auto;
+          & p {
+            padding: 5px 10px;
+            cursor: pointer;
+          }
+          & label {
+            margin-left: 30px !important;
+            margin-bottom: 15px;
+          }
+          .el-checkbox-group {
+            label {
+              .el-checkbox__label {
+                width: 60px;
+              }
+            }
+          }
+        }
+      }
+      &_btn {
+        margin-top: @btnMargin;
+      }
+    }
+  }
+  .permissionActive {
+    background: #D4E7F0;
+  }
+  #permission {
+    border: 1px solid @borderCon;
+    .permission_Con {
+      .conpadding1();
+      &_user {
+        font-size: 0.8rem;
+        &_text {
+          margin-top: 20px;
+          margin-bottom: 5px;
+        }
+        &_con {
+          border: 1px solid @borderCon;
+          padding: 15px;
+          width: 600px;
+          height: 200px;
+          overflow-y: auto;
+          & p {
+            padding: 5px 10px;
+            cursor: pointer;
+          }
+          & label {
+            margin-left: 30px !important;
+            margin-bottom: 15px;
+          }
+        }
+      }
+      &_btn {
+        margin-top: @btnMargin;
+      }
+    }
+  }
+  #addRole {
+    border: 1px solid @borderCon;
+    .addRole_Con {
+      .conpadding1();
+      &_user {
+        font-size: 0.8rem;
+        &_text {
+          margin-top: 20px;
+          margin-bottom: 5px;
+        }
+        &_con {
+          border: 1px solid @borderCon;
+          padding: 15px;
+          width: 1000px;
+          height: 365px;
+          overflow-y: auto;
+          & p {
+            padding: 5px 10px;
+            cursor: pointer;
+          }
+          & label {
+            //margin-left: 30px !important;
+            //margin-bottom: 15px;
+          }
+
+        }
+      }
+      &_btn {
+        //margin-top: @btnMargin;
+      }
+    }
+  }
+
+  #userList {
+    border: 1px solid @borderCon;
+    .userList_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+      // &_search {
+      // }
+      &_table {
+        margin-top: 20px;
+        width: 100%;
+        text-align: right;
+        &_btn {
+          margin-bottom: 20px;
+        }
+        &_pages {
+          margin-top: 40px;
+        }
+      }
+    }
+  }
+  #post {
+    border: 1px solid @borderCon;
+    .post_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+      // &_search {
+      // }
+      &_table {
+        margin-top: 20px;
+        width: 100%;
+        text-align: right;
+        &_btn {
+          margin-bottom: 20px;
+        }
+        &_pages {
+          margin-top: 40px;
+        }
+      }
+    }
+  }
+  #dictionar {
+    border: 1px solid @borderCon;
+    .dictionar_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+      // &_search {
+      // }
+      &_table {
+        margin-top: 20px;
+        width: 100%;
+        text-align: right;
+        &_btn {
+          margin-bottom: 20px;
+        }
+        &_pages {
+          margin-top: 40px;
+        }
+      }
+    }
+  }
+  #productList {
+    border: 1px solid @borderCon;
+    .productList_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+      // &_search {
+      // }
+      &_table {
+        //margin-top: 20px;
+        width: 100%;
+        text-align: right;
+        &_btn {
+          margin-bottom: 20px;
+        }
+        &_pages {
+          margin-top: 40px;
+        }
+      }
+    }
+  }
+  #projectList {
+    border: 1px solid @borderCon;
+    .projectList_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+      // &_search {
+      // }
+      &_table {
+        //margin-top: 20px;
+        width: 100%;
+        text-align: right;
+        &_btn {
+          margin-bottom: 20px;
+        }
+        &_pages {
+          margin-top: 40px;
+        }
+      }
+    }
+  }
+  #addproject {
+    border: 1px solid @borderCon;
+    .addproject_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+      // &_search {
+      // }
+      &_table {
+        //margin-top: 20px;
+        width: 100%;
+        text-align: right;
+        &_btn {
+          margin-bottom: 20px;
+        }
+        &_pages {
+          margin-top: 40px;
+        }
+      }
+    }
+  }
+  #roleList {
+    border: 1px solid @borderCon;
+    .roleList_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+      // &_search {
+      // }
+      &_table {
+        //margin-top: 60px;
+        width: 100%;
+        text-align: right;
+        &_btn {
+          margin-bottom: 20px;
+        }
+        &_pages {
+          margin-top: 40px;
+        }
+      }
+    }
+  }
+  #rpleList {
+    border: 1px solid @borderCon;
+    .rpleList_Con {
+      .conpadding1();
+      &_btn {
+        margin-top: @btnMargin;
+      }
+      // &_search {
+      // }
+      &_table {
+        margin-top: 60px;
+        width: 100%;
+        text-align: right;
+        &_btn {
+          margin-bottom: 20px;
+        }
+        &_pages {
+          margin-top: 20px;
+        }
+      }
+    }
+  }
+
+  //按钮颜色修改
+  .elButonColorY {
+    background-color: @elButonColorY;
+    &:active {
+      background-color: @elButonColorYactive
+    }
+  }
+  .elButonColorN {
+    background-color: @elButonColorN;
+    &:active {
+      background-color: @elButonColorNactive
+    }
+  }
+  .el-button--primary {
+    border: 0;
+  }
+
+  //vue-treeselect树插件样式
+  .vue-treeselect {
+    display: inline-table;
+    width: 177px;
+  }
+  .vue-treeselect__input-container {
+    height: initial;
+  }
+  .vue-treeselect__control {
+    border: 1px solid #E2E2E2;
+    height: 33px;
+  }
+  .vue-treeselect__value-container,.vue-treeselect__multi-value{
+    vertical-align: baseline;
+  }
+  .menulist_gncon {
+    border: 1px solid #67A7BC;
+    padding: 10px;
+    width: 120%;
+    min-height: 80px;
+    margin-top: 10px;
+  }
+  .el-dialog__body {
+    padding: 10px 20px 20px 20px;
+    float: left;
+    width: 100%;
+    padding: 10px 20px 20px 20px;
+    background: #ffffff;
+  }
+
+}

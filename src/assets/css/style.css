@@ -1,0 +1,50 @@
+* {
+  margin: 0;
+  padding: 0;
+  border: 0
+}
+
+html,
+body {
+  font-size: 16px;
+  color: #2C343B;
+  font-family: "Microsoft YaHei";
+  overflow-y: hidden;
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+#app {
+  min-width: 980px;
+}
+
+::-webkit-input-placeholder {
+  /* WebKit, Blink, Edge */
+  font-size: 0.7rem;
+  color: #999999 !important;
+}
+
+:-moz-placeholder {
+  /* Mozilla Firefox 4 to 18 */
+  font-size: 0.8rem;
+  color: #999999 !important;
+}
+
+::-moz-placeholder {
+  /* Mozilla Firefox 19+ */
+  font-size: 0.8rem;
+  color: #999999 !important;
+}
+
+:-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  font-size: 0.7rem;
+  color: #999999 !important;
+}
+/*滚动条设置*/
+/*::-webkit-scrollbar {*/
+  /*display: none;*/
+/*}*/
