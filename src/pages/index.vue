@@ -8,12 +8,8 @@
       background-color="#545c64"
       text-color="#fff"
       active-text-color="#ffd04b">
-      <el-menu-item index="0" style="font-size: 18px" disabled>TRADEASE</el-menu-item>
-      <el-menu-item index="1" style="margin-left: 60px;" @click="toSale">销售管理</el-menu-item>
-      <el-menu-item index="2">售后管理</el-menu-item>
-      <el-menu-item index="3">库存管理</el-menu-item>
-      <el-menu-item index="4">商品维护</el-menu-item>
-      <el-menu-item index="5">系统管理</el-menu-item>
+      <el-menu-item index="0" style="font-size: 18px;margin-right: 60px" disabled>TRADEASE</el-menu-item>
+      <el-menu-item :index="menu.orderNum" v-for="menu in navList" @click="findChildren(menu.id)">{{menu.name}}</el-menu-item>
       <el-submenu index="2" style="float:right">
         <template slot="title"><i class="el-icon-picture"></i>管理员</template>
         <el-menu-item index="2-1">个人信息</el-menu-item>
@@ -32,36 +28,21 @@
             text-color="#fff"
             style="height:100%"
             active-text-color="#ffd04b">
-            <el-submenu index="1">
-              <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>导航一</span>
-              </template>
-              <el-menu-item-group>
-                <template slot="title">分组一</template>
-                <el-menu-item index="1-1">选项1</el-menu-item>
-                <el-menu-item index="1-2">选项2</el-menu-item>
-              </el-menu-item-group>
-              <el-menu-item-group title="分组2">
-                <el-menu-item index="1-3">选项3</el-menu-item>
-              </el-menu-item-group>
-              <el-submenu index="1-4">
-                <template slot="title">选项4</template>
-                <el-menu-item index="1-4-1">选项1</el-menu-item>
+            <template v-for="menu in leftNavData">
+              <el-menu-item v-if="menu.isEnd==1"   :index="menu.orderNum"  @click="findPage(menu)">
+                <i :class="menu.icon"></i>
+                {{menu.name}}
+              </el-menu-item>
+              <el-submenu :index="menu.orderNum" v-if="menu.isEnd==2">
+                <template slot="title">
+                  <i :class="menu.icon"></i>
+                  <span>{{menu.name}}</span>
+                </template>
+                <el-menu-item-group >
+                  <el-menu-item :index="menu.orderNum+'-'+subMenu.orderNum"  v-for="submenu in menu.children"  @click="findPage(subMenu)">{{submenu.name}}</el-menu-item>
+                </el-menu-item-group>
               </el-submenu>
-            </el-submenu>
-            <el-menu-item index="2">
-              <i class="el-icon-menu"></i>
-              <span slot="title">导航二</span>
-            </el-menu-item>
-            <el-menu-item index="3" disabled>
-              <i class="el-icon-document"></i>
-              <span slot="title">导航三</span>
-            </el-menu-item>
-            <el-menu-item index="4">
-              <i class="el-icon-setting"></i>
-              <span slot="title">导航四</span>
-            </el-menu-item>
+            </template>
           </el-menu>
         </el-col>
         <el-col :span="22">
@@ -95,7 +76,6 @@
         navList: [],
         //左侧导航数据
         // 顶部图片显示
-
         leftNavData: [],
         defaultProps: {
           children: 'children',
@@ -118,24 +98,46 @@
     created () {
       // 顶部一级导航
       let _this = this
+      _this.firstMenus()
       _this.topnavFn()
       _this.eventsBus.$on('toplistdata', function (val) {
         _this.topnavFn()
         jq('.index_Nav_middle_list').eq(0).click()
       })
-
-      //左侧栏标题默认值
-      // this.navListTit = this.navList[0].text
-      // this.$router.push({
-      //   name: 'indexlist',
-      //   path: '/home/indexlist'
-      // })
     },
     mounted () {
       //this.goHome()
 
     },
     methods: {
+      firstMenus(){
+        let _this = this
+        _this.$http.post('/tradease/system/menu/menus', _this.qs.stringify({
+          menuType:1
+        }))
+          .then(function (res) {
+           _this.navList = res.data.data
+          })
+      },
+      findChildren(id){
+        let _this = this
+        _this.$http.post('/tradease/system/menu/menuTree', _this.qs.stringify({
+          pid:id
+        }))
+          .then(function (res) {
+            _this.leftNavData = res.data.data
+          })
+      },
+      findPage(menu){
+        debugger
+        let _this = this
+        if(menu.isEnd==1){
+          _this.$router.push({
+            name: menu.url,
+            path: menu.url
+          })
+        }
+      },
       // 顶部一级导航
       topnavFn () {
         let _this = this
@@ -281,6 +283,20 @@
         _this.$router.push({
           path: 'salelist',
           name: 'salelist',
+        })
+      },
+      toMenu(){
+        let _this = this
+        _this.$router.push({
+          path: 'sysmenu',
+          name: 'sysmenu',
+        })
+      },
+      toService(){
+        let _this = this
+        _this.$router.push({
+          path: 'productinstall',
+          name: 'productinstall',
         })
       },
       goHome () {

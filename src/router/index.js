@@ -51,6 +51,10 @@ import Looktestplan from '../pages/pagescomponents/testDelivery/testPlan/addtest
 import Testcasemodule from '../pages/pagescomponents/testCase/testCaseModule'
 import Testcaselist from '../pages/pagescomponents/testCase/testCaseList'
 import Salelist from '../pages/pagescomponents/sales/saleList'
+import Productinstall from '../pages/pagescomponents/businessServices/productInstall'
+import Sysmenu from '../pages/pagescomponents/sys/sysMenu'
+import Wholesalelist from '../pages/pagescomponents/sales/wholeSaleList'
+import Productrepair from '../pages/pagescomponents/businessServices/productRepair'
 
 
 Vue.use(Router)
@@ -242,6 +246,26 @@ const router =  new Router({
           path: 'salelist',
           name: 'salelist',
           component: Salelist,
+        },
+        {
+          path: 'wholesalelist',
+          name: 'wholesalelist',
+          component: Wholesalelist,
+        },
+        {
+          path: 'productinstall',
+          name: 'productinstall',
+          component: Productinstall,
+        },
+        {
+          path: 'productrepair',
+          name: 'productrepair',
+          component: Productrepair,
+        },
+        {
+          path: 'sysmenu',
+          name: 'sysmenu',
+          component: Sysmenu,
         }
 
       ]
