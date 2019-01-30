@@ -2,15 +2,11 @@
     <div id="productrepair">
       <el-card style="min-height: 900px;margin: 10px">
         <el-form ref="form"  label-width="150px" :inline="true">
-          <el-form-item label="订单名:">
-            <el-input v-model="nameSelect" placeholder="请选择"  style="width:250px">
-            </el-input>
-          </el-form-item>
           <el-form-item label="产品名:">
             <el-input v-model="nameSelect" placeholder="请选择"  style="width:250px">
             </el-input>
           </el-form-item>
-          <el-form-item label="收货人姓名:"  >
+          <el-form-item label="联系人姓名:"  >
             <el-input v-model="buyerSelect" style="width:250px" placeholder="请选择产品名称" >
             </el-input>
           </el-form-item>
@@ -24,7 +20,7 @@
             >
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="安装日期:">
+          <el-form-item label="维修日期:">
             <el-date-picker
               v-model="deliveryDateSelect"
               type="date"
@@ -33,7 +29,7 @@
               style="width:250px"
             ></el-date-picker>
           </el-form-item>
-          <el-form-item label="安装人:" >
+          <el-form-item label="维修人:" >
             <el-select v-model="payStatus"  style="width:250px">
               <el-option
                 v-for="item in payStatusSelectList"
@@ -43,7 +39,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="服务状态:">
+          <el-form-item label="维修状态:">
             <el-select v-model="serviceStatus"  style="width:250px">
               <el-option
                 v-for="item in serviceStatusSelectList"
@@ -74,38 +70,43 @@
             </el-table-column>
             <el-table-column
               prop="id"
-              label="安装编号"
+              label="维修编号"
               width="120">
             </el-table-column>
             <el-table-column
-              prop="name"
-              label="安装产品"
-              width="300">
-            </el-table-column>
-            <el-table-column
-              prop="buyer"
-              label="收货人"
-              width="140">
-            </el-table-column>
-            <el-table-column
-              prop="buyerPhone"
-              label="联系电话"
+              prop="productId"
+              label="产品名"
               width="200">
             </el-table-column>
             <el-table-column
+              prop="customer"
+              label="联系人"
+              width="140">
+            </el-table-column>
+            <el-table-column
+              prop="phone"
+              label="联系电话"
+              width="150">
+            </el-table-column>
+            <el-table-column
               prop="buyTime"
-              label="销售时间"
+              label="购买时间"
               width="140">
             </el-table-column>
             <el-table-column
-              prop="deliveryTime"
-              label="安装时间"
-              width="140">
-            </el-table-column>
-            <el-table-column
-              prop="payStatus"
+              prop="address"
               label="地址"
-              width="300">
+              width="250">
+            </el-table-column>
+            <el-table-column
+              prop="serviceTime"
+              label="维修时间"
+              width="150">
+            </el-table-column>
+            <el-table-column
+              prop="manId"
+              label="维修人"
+              width="150">
             </el-table-column>
             <el-table-column
               prop="serviceStatus"
@@ -137,6 +138,88 @@
           </div>
         </div>
       </el-card>
+      <el-dialog title="新增" :visible.sync="isAdd" width="60%">
+        <el-form label-position="right" label-width="100px" :inline="true">
+          <el-form-item label="产品名:">
+            <el-input v-model="repairItem.productId" placeholder="请选择"  style="width:250px">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="订单名称:">
+            <el-input v-model="repairItem.orderId" placeholder="请选择"  style="width:250px">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="联系人:">
+            <el-input v-model="repairItem.customer" placeholder="请选择"  style="width:250px">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="电话:">
+            <el-input v-model="repairItem.phone" placeholder="请选择"  style="width:250px">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="安装时间:" >
+            <el-date-picker
+              v-model="repairItem.installTime"
+              type="datetime"
+              align="right"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              unlink-panels
+              style="width:250px"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="地址:">
+            <el-input v-model="repairItem.address" placeholder="请选择"  style="width:250px">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="内机条码:">
+            <el-input v-model="repairItem.innerCode" placeholder="请输入"  style="width:250px">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="外机条码:">
+            <el-input v-model="repairItem.outterCode" placeholder="请输入"  style="width:250px">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="故障现象:">
+            <el-input v-model="repairItem.malfunction" placeholder="请输入"  style="width:250px">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="故障代码:">
+            <el-input v-model="repairItem.malfunctionCode" placeholder="请输入"  style="width:250px">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="维修措施:">
+            <el-input v-model="repairItem.repairWay" placeholder="请输入"  style="width:250px">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="维修人:">
+            <el-input v-model="repairItem.manId" placeholder="请输入"  style="width:250px">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="维修时间:">
+            <el-date-picker
+              v-model="repairItem.serviceTime"
+              type="datetime"
+              align="right"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              unlink-panels
+              style="width:250px"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="备注:">
+            <el-input v-model="repairItem.remark" placeholder="请输入"  style="width:250px">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="维修状态:">
+            <el-input v-model="repairItem.serviceStatus" placeholder="请输入"  style="width:250px">
+            </el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="toAdd = false">取 消</el-button>
+          <el-button type="primary" @click="addSubmit">确 定</el-button>
+        </div>
+      </el-dialog>
     </div>
 </template>
 
@@ -145,7 +228,7 @@
     data(){
       return {
         tableData:[],
-        repairItemrepairItem:{},
+        repairItem:{},
         isAdd:false,
         totalRows:null,
         currentPage:1,
@@ -153,9 +236,62 @@
       }
     },
     created(){
-
+      this.initTable()
     },
     methods:{
+      initTable(){
+        let _this = this
+        _this.$http.post('/tradease/productRepair/page',_this.qs.stringify({
+          currentPage:_this.currentPage,
+          pageSize:_this.pageSize,
+        })).then(function(res){
+          if(res.data.code == 0){
+            _this.tableData = res.data.page.datas
+          }else{
+            _this.$notify.error({
+              title: '错误',
+              message: res.data.resMsg
+            });
+          }
+        })
+      },
+      toAdd(){
+        this.isAdd = true
+      },
+      search(){
+
+      },
+      clearSearch(){
+
+      },
+      addSubmit(){
+        let _this = this
+        let param = this.repairItem
+        _this.$http.post('/tradease/productRepair/insert',_this.qs.stringify(
+          param
+        )).then(function(res){
+          if(res.data.code == 0){
+            _this.$notify.success({
+              title: '添加成功',
+              message: res.data.msg
+            });
+            _this.isAdd = false
+            _this.initTable()
+          }else{
+            _this.$notify.error({
+              title: '错误',
+              message: res.data.msg
+            });
+          }
+        })
+      },
+      toEdit(){
+
+      },
+      toSee(){
+
+      }
+
 
     }
   }

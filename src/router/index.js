@@ -36,7 +36,7 @@ import Editproject from '../pages/pagescomponents/basedataManage/addproject'
 import Lookproject from '../pages/pagescomponents/basedataManage/addproject'
 
 import Addproduct from '../pages/pagescomponents/projectManage/addproduct'
-import Productlist from '../pages/pagescomponents/projectManage/productList'
+import Productlist from '../pages/pagescomponents/product/productList'
 import Lookproduct from '../pages/pagescomponents/projectManage/lookproduct'
 import Editproduct from '../pages/pagescomponents/projectManage/editproduct'
 import Versiontotestlist from '../pages/pagescomponents/versionToTest/versionToTestList'
@@ -55,7 +55,13 @@ import Productinstall from '../pages/pagescomponents/businessServices/productIns
 import Sysmenu from '../pages/pagescomponents/sys/sysMenu'
 import Wholesalelist from '../pages/pagescomponents/sales/wholeSaleList'
 import Productrepair from '../pages/pagescomponents/businessServices/productRepair'
-
+import Storeinfo from '../pages/pagescomponents/store/storeInfo'
+import Outstore from '../pages/pagescomponents/store/outstore'
+import Instore from '../pages/pagescomponents/store/instore'
+import Producttype from '../pages/pagescomponents/product/productType'
+import Orderbill from '../pages/pagescomponents/finance/orderbill'
+import Sysuser from '../pages/pagescomponents/sys/sysUser'
+import SysDic from '../pages/pagescomponents/sys/sysDic'
 
 Vue.use(Router)
 
@@ -263,9 +269,44 @@ const router =  new Router({
           component: Productrepair,
         },
         {
+          path: 'storeinfo',
+          name: 'storeinfo',
+          component: Storeinfo,
+        },
+        {
+          path: 'instore',
+          name: 'instore',
+          component: Instore,
+        },
+        {
+          path: 'outstore',
+          name: 'outstore',
+          component: Outstore,
+        },
+        {
           path: 'sysmenu',
           name: 'sysmenu',
           component: Sysmenu,
+        },
+        {
+          path: 'producttype',
+          name: 'producttype',
+          component: Producttype,
+        },
+        {
+          path: 'orderbill',
+          name: 'orderbill',
+          component: Orderbill,
+        },
+        {
+          path: 'sysuser',
+          name: 'sysuser',
+          component: Sysuser,
+        },
+        {
+          path: 'sysdic',
+          name: 'sysdic',
+          component: SysDic,
         }
 
       ]

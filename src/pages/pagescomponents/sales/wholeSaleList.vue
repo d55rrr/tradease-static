@@ -39,7 +39,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="服务状态:">
+          <el-form-item label="提货状态:">
             <el-select v-model="serviceStatus"  style="width:250px">
               <el-option
                 v-for="item in serviceStatusSelectList"

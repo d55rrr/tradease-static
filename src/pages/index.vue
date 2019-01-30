@@ -16,6 +16,7 @@
         <el-menu-item index="2-2">修改密码</el-menu-item>
         <el-menu-item index="2-3">退出</el-menu-item>
       </el-submenu>
+      <el-color-picker v-model="color3" show-alpha style="float:right;margin-top: 20px;"  size="mini"></el-color-picker>
     </el-menu>
     <div>
       <el-row>
@@ -398,6 +399,10 @@
   @import url("../assets/less/style.less");
   .el-submenu .el-menu-item{
     min-width: 150px;
+  }
+  .el-color-picker__trigger{
+    width: 20px!important;
+    height: 20px!important;
   }
 
 </style>
