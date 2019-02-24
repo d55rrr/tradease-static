@@ -21,18 +21,15 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item label="性别:">
-            <el-date-picker
-              v-model="deliveryDateSelect"
-              type="date"
-              align="right"
-              unlink-panels
-              style="width:250px"
-            ></el-date-picker>
+            <el-select v-model="sexSelect"  style="width:250px">
+              <el-option key="1" label="男" value="1"></el-option>
+              <el-option key="2" label="女" value="2"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="在职状态:" >
-            <el-select v-model="payStatus"  style="width:250px">
+            <el-select v-model="inServiceSelect"  style="width:250px" clearable>
               <el-option
-                v-for="item in payStatusSelectList"
+                v-for="item in inServiceSelectList"
                 :key="item.id"
                 :label="item.name"
                 :value="item.value">
@@ -82,6 +79,10 @@
               prop="sex"
               label="性别"
               width="140">
+              <template slot-scope="scope">
+                <span v-if="scope.row.sex==1">男</span>
+                <span v-if="scope.row.sex==2">女</span>
+              </template>
             </el-table-column>
             <el-table-column
               prop="cdate"
@@ -98,12 +99,11 @@
               label="密码权限"
               width="150">
             </el-table-column>
-            <el-table-column label="操作" >
-              <template slot-scope="scope">
+            <el-table-column label="操作"  width="120">
+              <template slot-scope="scope" >
                 <el-button-group >
                   <el-button type="text" size="mini" style="width:30px" @click="toEdit(scope.row)">编辑</el-button>
                   <el-button type="text" size="mini" style="width:30px" @click="toSee(scope.row)">查看</el-button>
-                  <el-button type="text" size="mini" style="width:30px" @click="toEdit(scope.row)">打印</el-button>
                 </el-button-group>
               </template>
             </el-table-column>
@@ -137,15 +137,16 @@
             <el-input v-model="userItem.phone" placeholder="请选择"  style="width:100%">
             </el-input>
           </el-form-item>
-          <el-form-item label="性别:"  >
-            <el-select v-model="userItem.sex"  style="width:100%">
-              <el-option
-                v-for="item in serviceStatusSelectList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.value">
-              </el-option>
+          <el-form-item label="在职状态:">
+            <el-select v-model="userItem.occupy" placeholder="请选择"  style="width:100%">
+              <el-option :label="item.name" :value="item.value" :key="item.value" v-for="item in inServiceSelectList"></el-option>
             </el-select>
+          </el-form-item>
+          <el-form-item label="性别:"  >
+            <el-radio-group v-model="userItem.sex"  style="width:100%">
+              <el-radio :label="1">男</el-radio>
+              <el-radio :label="2">女</el-radio>
+            </el-radio-group>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -170,16 +171,37 @@
        serviceStatus:null,
        isAdd:false,
        userItem:{},
+       inServiceSelect:null,
+       sexSelect:null,
        products:[{id:null,quantity:null,price:null}],
-       payStatusSelectList:[{'id':'1','name':'已结'}],
-       serviceStatusSelectList:[{'id':'1','name':'未配送'}],
+       inServiceSelectList:[],
        tableData:[]
      }
    },
     created(){
-     this.initTable()
+     let _this = this
+      this.initTable()
+      this.findDic("sys","inService",function(res){
+        _this.inServiceSelectList = res
+      })
     },
     methods:{
+      findDic(businessModule,subjectModule,callback){
+        let _this = this
+        _this.$http.post('/tradease/sysdic/dicList',_this.qs.stringify({
+          businessModule:businessModule,
+          subjectModule:subjectModule,
+        })).then(function(res){
+          if(res.data.code == 0){
+            callback(res.data.data)
+          }else{
+            _this.$notify.error({
+              title: '错误',
+              message: res.data.resMsg
+            });
+          }
+        })
+      },
       initTable(){
         let _this = this
         _this.$http.post('/tradease/sys/user/userList',_this.qs.stringify({

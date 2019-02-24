@@ -62,6 +62,7 @@ import Producttype from '../pages/pagescomponents/product/productType'
 import Orderbill from '../pages/pagescomponents/finance/orderbill'
 import Sysuser from '../pages/pagescomponents/sys/sysUser'
 import SysDic from '../pages/pagescomponents/sys/sysDic'
+import Tobusiness from '../pages/pagescomponents/customerRelation/tobusiness'
 
 Vue.use(Router)
 
@@ -307,6 +308,10 @@ const router =  new Router({
           path: 'sysdic',
           name: 'sysdic',
           component: SysDic,
+        },{
+          path: 'tobusiness',
+          name: 'tobusiness',
+          component: Tobusiness,
         }
 
       ]

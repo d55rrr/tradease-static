@@ -33,8 +33,8 @@
           <el-form-item label="入库类型:" >
             <el-select v-model="stockType"  style="width:250px">
               <el-option
-                v-for="item in payStatusSelectList"
-                :key="item.id"
+                v-for="item in instockTypeSelectList"
+                :key="item.value"
                 :label="item.name"
                 :value="item.value">
               </el-option>
@@ -93,6 +93,7 @@
               prop="transactorId"
               label="入库人"
               width="140">
+              stockType
             </el-table-column>
             <el-table-column
               prop="stockTime"
@@ -103,18 +104,24 @@
               prop="deliveryType"
               label="提货方式"
               width="140">
+              <template slot-scope="scope">
+                <span v-for="item in deliveryTypeSelectList" v-if="scope.row.deliveryType==item.value">{{item.name}}</span>
+              </template>
             </el-table-column>
             <el-table-column
               prop="stockType"
               label="入库类型"
               width="150">
+              <template slot-scope="scope">
+                <span v-for="item in instockTypeSelectList" v-if="scope.row.stockType==item.value">{{item.name}}</span>
+              </template>
             </el-table-column>
             <el-table-column
               prop="stockStatus"
               label="入库状态"
               width="150">
             </el-table-column>
-            <el-table-column label="操作" >
+            <el-table-column label="操作" width="120px" >
               <template slot-scope="scope">
                 <el-button-group >
                   <el-button type="text" size="mini" style="width:30px" @click="toEdit(scope.row)">编辑</el-button>
@@ -148,7 +155,7 @@
           <el-form-item label="入库类型:"  >
             <el-select v-model="storeItem.stockType"  style="width:250px">
               <el-option
-                v-for="item in stockTypeSelectList"
+                v-for="item in instockTypeSelectList"
                 :key="item.id"
                 :label="item.name"
                 :value="item.value">
@@ -167,16 +174,24 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item label="入库人:"  >
-            <el-input v-model="storeItem.transactorId" style="width:250px" placeholder="请选择产品名称" >
-            </el-input>
+            <el-select v-model="storeItem.transactorId" style="width:250px">
+              <el-option
+                v-for="item in userSelectList"
+                :key="item.id"
+                :label="item.userName"
+                :value="item.id">
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="提货方式:"  >
-            <el-input v-model="storeItem.deliveryType" style="width:250px" placeholder="请选择产品名称" >
-            </el-input>
-          </el-form-item>
-          <el-form-item label="入库状态:"  >
-            <el-input v-model="storeItem.inStatus" style="width:250px" placeholder="请选择产品名称" >
-            </el-input>
+            <el-select v-model="storeItem.deliveryType"  style="width:250px">
+              <el-option
+                v-for="item in deliveryTypeSelectList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.value">
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="备注:"  >
             <el-input v-model="storeItem.remark" style="width:250px" placeholder="请选择产品名称" >
@@ -257,7 +272,12 @@
         serviceStatusSelectList:[{'id':'1','name':'未配送'}],
         tableData:[],
         detailData:[],
-        stockTypeSelectList:[{'id':'1','name':'进货'}],
+        instockTypeSelectList:[],
+        instockStatusSelectList:[],
+        deliveryTypeSelectList:[],
+        warehouseSelectList:[],
+        productSelectList:[],
+        userSelectList:[],
         headers:[
           {
             key:'productId',
@@ -296,7 +316,23 @@
       }
     },
     created(){
+      let _this = this
       this.initTable()
+      this.findDic("stock","instockType",function(res){
+        _this.instockTypeSelectList = res
+      })
+      this.findDic("stock","instockStatus",function(res){
+        _this.instockStatusSelectList = res
+      })
+      this.findDic("sale","deliveryType",function(res){
+        _this.deliveryTypeSelectList = res
+      })
+      this.findDic("stock","warehouse",function(res){
+        _this.warehouseSelectList = res
+      })
+      this.findProductList()
+      this.findUserList()
+
     },
     methods:{
       initTable(){
@@ -329,6 +365,10 @@
       },
       toAdd(){
         this.isAdd = true
+        this.headers[4].selectList = this.warehouseSelectList
+        this.headers[5].selectList = this.instockStatusSelectList
+        this.headers[0].selectList = this.productSelectList
+
       },
       toDelete(){
 
@@ -336,23 +376,69 @@
       addSubmit(){
         let _this = this
         let param = this.storeItem
-        alert(JSON.stringify(param))
-        _this.$http.post('/tradease/inStock/insert',_this.qs.stringify(
-          param
-        )).then(function(res){
+        param.inStockDetail = this.detailData
+        if(param.id){
+
+        }else{
+          //alert(JSON.stringify(param))
+          _this.$http({
+            url: '/tradease/inStock/insert',
+            method: 'post',
+            data: JSON.stringify(param),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }).then(function(res){
+            if(res.data.code == 0){
+              _this.$notify.success({
+                title: '添加成功',
+                message: res.data.msg
+              });
+              _this.isAdd = false
+              _this.initTable()
+            }else{
+              _this.$notify.error({
+                title: '错误',
+                message: res.data.msg
+              });
+            }
+          })
+        }
+
+
+      },
+      findUserList(){
+        let _this = this
+        _this.$http.post('/tradease/sys/user/userList',
+          _this.qs.stringify({pageSize:10000})
+        ).then(function(res){
           if(res.data.code == 0){
-            _this.$notify.success({
-              title: '添加成功',
-              message: res.data.msg
-            });
-            _this.isAdd = false
-            _this.initTable()
+            _this.userSelectList = res.data.page.datas
           }else{
             _this.$notify.error({
               title: '错误',
               message: res.data.msg
             });
           }
+
+        })
+      },
+      findProductList(){
+        let _this = this
+        _this.productSelectList = []
+        _this.$http.post('/tradease/product/list'
+        ).then(function(res){
+          if(res.data.code == 0){
+            res.data.data.forEach(item=>{
+              _this.productSelectList.push({name:item.name,value:item.id})
+            })
+          }else{
+            _this.$notify.error({
+              title: '错误',
+              message: res.data.msg
+            });
+          }
+
         })
       },
       addRow(){
@@ -360,6 +446,22 @@
       },
       removeRow(){
         this.$refs.edit.remove()
+      },
+      findDic(businessModule,subjectModule,callback){
+        let _this = this
+        _this.$http.post('/tradease/sysdic/dicList',_this.qs.stringify({
+          businessModule:businessModule,
+          subjectModule:subjectModule,
+        })).then(function(res){
+          if(res.data.code == 0){
+            callback(res.data.data)
+          }else{
+            _this.$notify.error({
+              title: '错误',
+              message: res.data.resMsg
+            });
+          }
+        })
       },
 
     }

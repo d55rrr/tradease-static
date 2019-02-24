@@ -3,36 +3,30 @@
       <el-card style="min-height: 900px;margin: 10px">
         <el-form ref="form"  label-width="150px" :inline="true">
           <el-form-item label="产品类别:"  >
-            <el-input v-model="buyerSelect" style="width:250px" placeholder="请选择产品名称" >
-            </el-input>
+            <treeselect
+              style="width:250px;"
+              :options="typeTree"
+              placeholder="请选择产品类别"
+              :default-expand-level="10"
+              v-model="productTypeSelect"
+            />
           </el-form-item>
           <el-form-item label="产品名:">
             <el-input v-model="nameSelect" placeholder="请选择"  style="width:250px">
             </el-input>
           </el-form-item>
           <el-form-item label="品牌:" >
-            <el-date-picker
-              v-model="buyDateSelect"
-              type="date"
-              align="right"
-              unlink-panels
-              style="width:250px"
-            >
-            </el-date-picker>
+            <el-select style="width:250px" placeholder="请选择产品品牌" v-model="brandSelect">
+              <el-option :key="item.value" :value="item.value" :label="item.name" v-for="item in brandSelectList" ></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="型号:">
-            <el-date-picker
-              v-model="deliveryDateSelect"
-              type="date"
-              align="right"
-              unlink-panels
-              style="width:250px"
-            ></el-date-picker>
+            <el-input v-model="codeSelect" style="width:250px"></el-input>
           </el-form-item>
           <el-form-item label="在售状态:" >
-            <el-select v-model="payStatus"  style="width:250px">
+            <el-select v-model="saleStatusSelect"  style="width:250px">
               <el-option
-                v-for="item in payStatusSelectList"
+                v-for="item in saleStatusSelectList"
                 :key="item.id"
                 :label="item.name"
                 :value="item.value">
@@ -74,9 +68,12 @@
               width="140">
             </el-table-column>
             <el-table-column
-              prop="brandName"
+              prop="brandId"
               label="品牌"
               width="200">
+              <template slot-scope="scope">
+                <span v-for="item in brandSelectList" v-if="scope.row.brandId==item.value">{{item.name}}</span>
+              </template>
             </el-table-column>
             <el-table-column
               prop="code"
@@ -99,16 +96,23 @@
               width="150">
             </el-table-column>
             <el-table-column
+              prop="wholesalePrice"
+              label="批发价"
+              width="150">
+            </el-table-column>
+            <el-table-column
               prop="saleStatus"
               label="在售状态"
               width="150">
+              <template slot-scope="scope">
+                <span v-for="item in saleStatusSelectList" v-if="scope.row.saleStatus==item.value">{{item.name}}</span>
+              </template>
             </el-table-column>
-            <el-table-column label="操作" >
+            <el-table-column label="操作"  width="120">
               <template slot-scope="scope">
                 <el-button-group >
                   <el-button type="text" size="mini" style="width:30px" @click="toEdit(scope.row)">编辑</el-button>
                   <el-button type="text" size="mini" style="width:30px" @click="toSee(scope.row)">查看</el-button>
-                  <el-button type="text" size="mini" style="width:30px" @click="toEdit(scope.row)">打印</el-button>
                 </el-button-group>
               </template>
             </el-table-column>
@@ -135,18 +139,19 @@
             </el-input>
           </el-form-item>
           <el-form-item label="商品类别:"  >
-            <el-select v-model="productItem.type"  style="width:250px">
-              <el-option
-                v-for="item in serviceStatusSelectList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.value">
-              </el-option>
-            </el-select>
+              <treeselect
+                style="width:250px;"
+                :options="typeTree"
+                @select="selectProductType"
+                placeholder="请选择产品类别"
+                :default-expand-level="10"
+                v-model="productItem.type"
+              />
           </el-form-item>
           <el-form-item label="品牌:"  >
-            <el-input v-model="productItem.brandId" style="width:250px" placeholder="请选择产品名称" >
-            </el-input>
+            <el-select style="width:250px" placeholder="请选择产品品牌" v-model="productItem.brandId">
+              <el-option :key="item.value" :value="item.value" :label="item.name" v-for="item in brandSelectList" ></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="型号:"  >
             <el-input v-model="productItem.code" style="width:250px" placeholder="请选择产品名称" >
@@ -168,9 +173,14 @@
             <el-input v-model="productItem.salePrice" style="width:250px" placeholder="请选择产品名称" >
             </el-input>
           </el-form-item>
-          <el-form-item label="在售状态:"  >
-            <el-input v-model="productItem.saleStatus" style="width:250px" placeholder="请选择产品名称" >
+          <el-form-item label="批发价:"  >
+            <el-input v-model="productItem.wholesalePrice" style="width:250px" placeholder="请选择产品名称" >
             </el-input>
+          </el-form-item>
+          <el-form-item label="在售状态:"  >
+            <el-select style="width:250px" v-model="productItem.saleStatus">
+              <el-option :key="item.value" :value="item.value" :label="item.name"  v-for="item in saleStatusSelectList"></el-option>
+            </el-select>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -187,8 +197,10 @@
      return {
        currentPage: 1,
        pageSize: 10,
-       buyerSelect:'',
-       nameSelect:'',
+       nameSelect:null,
+       brandSelect:null,
+       saleStatusSelect:null,
+       codeSelect:null,
        buyDateSelect:null,
        deliveryDateSelect:null,
        payStatus:null,
@@ -198,11 +210,23 @@
        products:[{id:null,quantity:null,price:null}],
        payStatusSelectList:[{'id':'1','name':'已结'}],
        serviceStatusSelectList:[{'id':'1','name':'未配送'}],
+       productTypeSelectList:[],
+       brandSelectList:[],
+       saleStatusSelectList:[],
+       typeTree:[],
        tableData:[]
      }
    },
     created(){
+     let _this = this
+     this.findTypeTree()
      this.initTable()
+      this.findDic("product","saleStatus",function(res){
+        _this.saleStatusSelectList = res
+      })
+      this.findDic("product","brand",function(res){
+        _this.brandSelectList = res
+      })
     },
     methods:{
       initTable(){
@@ -221,14 +245,33 @@
           }
         })
       },
+      findTypeTree(){
+        let _this = this
+        _this.$http.post('/tradease/productModule/tree'
+        ).then(function(res){
+          if(res.data.code == 0){
+            _this.typeTree = res.data.data
+          }else{
+            _this.$notify.error({
+              title: '错误',
+              message: res.data.msg
+            });
+          }
+
+        })
+      },
+      selectProductType(node){
+        this.productItem.typeName = node.label
+      },
       search(){
 
       },
       clearSearch(){
 
       },
-      toEdit(){
-
+      toEdit(row){
+        this.isAdd = true
+        this.productItem = row
       },
       toSee(){
 
@@ -242,21 +285,57 @@
       addSubmit(){
         let _this = this
         let param = this.productItem
-        alert(JSON.stringify(param))
-        _this.$http.post('/tradease/product/insert',_this.qs.stringify(
-          param
-        )).then(function(res){
+        if(param.id){
+          _this.$http.post('/tradease/product/update',_this.qs.stringify(
+            param
+          )).then(function(res){
+            if(res.data.code == 0){
+              _this.$notify.success({
+                title: '修改成功',
+                message: res.data.msg
+              });
+              _this.isAdd = false
+              _this.initTable()
+            }else{
+              _this.$notify.error({
+                title: '错误',
+                message: res.data.msg
+              });
+            }
+          })
+        }else{
+          _this.$http.post('/tradease/product/insert',_this.qs.stringify(
+            param
+          )).then(function(res){
+            if(res.data.code == 0){
+              _this.$notify.success({
+                title: '添加成功',
+                message: res.data.msg
+              });
+              _this.isAdd = false
+              _this.initTable()
+            }else{
+              _this.$notify.error({
+                title: '错误',
+                message: res.data.msg
+              });
+            }
+          })
+        }
+
+      },
+      findDic(businessModule,subjectModule,callback){
+        let _this = this
+        _this.$http.post('/tradease/sysdic/dicList',_this.qs.stringify({
+          businessModule:businessModule,
+          subjectModule:subjectModule,
+        })).then(function(res){
           if(res.data.code == 0){
-            _this.$notify.success({
-              title: '添加成功',
-              message: res.data.msg
-            });
-            _this.isAdd = false
-            _this.initTable()
+            callback(res.data.data)
           }else{
             _this.$notify.error({
               title: '错误',
-              message: res.data.msg
+              message: res.data.resMsg
             });
           }
         })

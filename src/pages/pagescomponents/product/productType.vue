@@ -14,13 +14,18 @@
       </el-card>
       <el-dialog title="新增" :visible.sync="isAdd" width="30%">
         <el-form label-position="right" label-width="80px" >
-          <el-form-item label="菜单名:">
+          <el-form-item label="商品类别:">
             <el-input v-model="moduleItem.name" placeholder="请选择"  style="width:100%">
             </el-input>
           </el-form-item>
           <el-form-item label="父节点:">
-            <el-input v-model="moduleItem.pid" placeholder="请选择"  style="width:100%">
-            </el-input>
+            <treeselect
+              style="width:100%;"
+              :options="typeTree"
+              placeholder="请选择父类型"
+              :default-expand-level="10"
+              v-model="moduleItem.pid"
+            />
           </el-form-item>
           <el-form-item label="描述:">
             <el-input v-model="moduleItem.remark" placeholder="请选择"  style="width:100%">
@@ -47,6 +52,7 @@
         tableData:[],
         isAdd:false,
         moduleItem:{},
+        typeTree:[],
         header:[
           {
             label:'商品类型',
@@ -56,8 +62,8 @@
             minWidth:'100px',
           },
           {
-            label:'编号',
-            prop:'id',
+            label:'类型级别',
+            prop:'level',
             headerAlign:'center',
             align:'center',
             minWidth:'100px',
@@ -80,6 +86,7 @@
       }
     },
     created(){
+      let _this = this
       this.initTable()
     },
     methods:{
@@ -89,6 +96,7 @@
         ).then(function(res){
           if(res.data.code == 0){
             _this.tableData = res.data.data
+            _this.typeTree = res.data.data
           }else{
             _this.$notify.error({
               title: '错误',
