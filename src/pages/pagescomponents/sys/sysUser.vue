@@ -10,16 +10,6 @@
             <el-input v-model="phoneSelect" placeholder="请选择"  style="width:250px">
             </el-input>
           </el-form-item>
-          <el-form-item label="创建时间:" >
-            <el-date-picker
-              v-model="cdateSelect"
-              type="date"
-              align="right"
-              unlink-panels
-              style="width:250px"
-            >
-            </el-date-picker>
-          </el-form-item>
           <el-form-item label="性别:">
             <el-select v-model="sexSelect"  style="width:250px">
               <el-option key="1" label="男" value="1"></el-option>
@@ -50,6 +40,7 @@
             :data="tableData"
             border
             style="width: 100%;"
+            @selection-change="rowSelect"
           >
             <el-table-column
               type="selection"
@@ -93,13 +84,16 @@
               prop="occupy"
               label="是否在职"
               width="140">
+              <template slot-scope="scope">
+                <span v-if="scope.row.occupy==item.value" v-for="item in inServiceSelectList">{{item.name}}</span>
+              </template>
             </el-table-column>
             <el-table-column
               prop="buyPrice"
               label="密码权限"
               width="150">
             </el-table-column>
-            <el-table-column label="操作"  width="120">
+            <el-table-column label="操作"  >
               <template slot-scope="scope" >
                 <el-button-group >
                   <el-button type="text" size="mini" style="width:30px" @click="toEdit(scope.row)">编辑</el-button>
@@ -175,7 +169,8 @@
        sexSelect:null,
        products:[{id:null,quantity:null,price:null}],
        inServiceSelectList:[],
-       tableData:[]
+       tableData:[],
+       selectedIds:[],
      }
    },
     created(){
@@ -188,7 +183,7 @@
     methods:{
       findDic(businessModule,subjectModule,callback){
         let _this = this
-        _this.$http.post('/tradease/sysdic/dicList',_this.qs.stringify({
+        _this.$http.post('/sysdic/dicList',_this.qs.stringify({
           businessModule:businessModule,
           subjectModule:subjectModule,
         })).then(function(res){
@@ -204,12 +199,18 @@
       },
       initTable(){
         let _this = this
-        _this.$http.post('/tradease/sys/user/userList',_this.qs.stringify({
+        _this.$http.post('/sys/user/userList',_this.qs.stringify({
           currentPage:_this.currentPage,
           pageSize:_this.pageSize,
+          userName:_this.nameSelect,
+          phone:_this.phoneSelect,
+          occupy:_this.inServiceSelect
         })).then(function(res){
           if(res.data.code == 0){
             _this.tableData = res.data.page.datas
+            _this.totalRows = res.data.page.total
+            _this.currentPage = res.data.page.currentPage
+            _this.pageSize = res.data.page.pageSize
           }else{
             _this.$notify.error({
               title: '错误',
@@ -219,44 +220,104 @@
         })
       },
       search(){
-
+        this.initTable()
       },
       clearSearch(){
-
+        this.nameSelect = ''
+        this.phoneSelect = ''
+        this.sexSelect = null
+        this.inServiceSelect = null
       },
-      toEdit(){
-
+      toEdit(row){
+        this.isAdd = true
+        this.userItem = row
       },
       toSee(){
 
       },
       toAdd(){
         this.isAdd = true
+        this.userItem = {}
+      },
+      rowSelect(selection){
+        let _this = this
+        this.selectedIds =  []
+        if(selection.length){
+          selection.forEach(item=>{
+            _this.selectedIds.push(item.id)
+          })
+        }
       },
       toDelete(){
+        let _this = this
+        if(!_this.selectedIds.length){
+          _this.$notify.info({
+            title: '消息',
+            message:'请选择删除行！'
+          });
+          return
+        }
+        this.$confirm('确认删除吗？').then(function(){
+          _this.$http.post('//sys/user/delete',
+            _this.qs.stringify({ids:_this.selectedIds.join(",")})
+          ).then(function(res){
+            if(res.data.code == 0){
+              _this.$notify.success({
+                title: '成功',
+                message: res.data.msg
+              });
+              _this.initTable()
+            }else{
+              _this.$notify.error({
+                title: '错误',
+                message: res.data.msg
+              });
+            }
 
+          })
+        })
       },
       addSubmit(){
         let _this = this
         let param = this.userItem
-        alert(JSON.stringify(param))
-        _this.$http.post('/tradease/sys/user/add',_this.qs.stringify(
-          param
-        )).then(function(res){
-          if(res.data.code == 0){
-            _this.$notify.success({
-              title: '添加成功',
-              message: res.data.msg
-            });
-            _this.isAdd = false
-            _this.initTable()
-          }else{
-            _this.$notify.error({
-              title: '错误',
-              message: res.data.msg
-            });
-          }
-        })
+        if(param.id){
+          _this.$http.post('/sys/user/update',_this.qs.stringify(
+            param
+          )).then(function(res){
+            if(res.data.code == 0){
+              _this.$notify.success({
+                title: '修改成功',
+                message: res.data.msg
+              });
+              _this.isAdd = false
+              _this.initTable()
+            }else{
+              _this.$notify.error({
+                title: '错误',
+                message: res.data.msg
+              });
+            }
+          })
+        }else{
+          _this.$http.post('/sys/user/add',_this.qs.stringify(
+            param
+          )).then(function(res){
+            if(res.data.code == 0){
+              _this.$notify.success({
+                title: '添加成功',
+                message: res.data.msg
+              });
+              _this.isAdd = false
+              _this.initTable()
+            }else{
+              _this.$notify.error({
+                title: '错误',
+                message: res.data.msg
+              });
+            }
+          })
+        }
+
       },
 
 

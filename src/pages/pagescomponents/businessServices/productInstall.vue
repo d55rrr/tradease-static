@@ -263,7 +263,7 @@
     methods:{
       initTable(){
         let _this = this
-        _this.$http.post('/tradease/productInstall/page',_this.qs.stringify({
+        _this.$http.post('/productInstall/page',_this.qs.stringify({
           currentPage:_this.currentPage,
           pageSize:_this.pageSize,
         })).then(function(res){
@@ -289,7 +289,7 @@
       addSubmit(){
         let _this = this
         let param = this.installItem
-        _this.$http.post('/tradease/productInstall/insert',_this.qs.stringify(
+        _this.$http.post('/productInstall/insert',_this.qs.stringify(
           param
         )).then(function(res){
           if(res.data.code == 0){

@@ -12,19 +12,19 @@
             />
           </el-form-item>
           <el-form-item label="产品名:">
-            <el-input v-model="nameSelect" placeholder="请选择"  style="width:250px">
+            <el-input v-model="nameSelect" placeholder="请选择"  style="width:250px" clearable>
             </el-input>
           </el-form-item>
           <el-form-item label="品牌:" >
-            <el-select style="width:250px" placeholder="请选择产品品牌" v-model="brandSelect">
+            <el-select style="width:250px" placeholder="请选择产品品牌" v-model="brandSelect" clearable>
               <el-option :key="item.value" :value="item.value" :label="item.name" v-for="item in brandSelectList" ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="型号:">
-            <el-input v-model="codeSelect" style="width:250px"></el-input>
+            <el-input v-model="codeSelect" style="width:250px" clearable></el-input>
           </el-form-item>
           <el-form-item label="在售状态:" >
-            <el-select v-model="saleStatusSelect"  style="width:250px">
+            <el-select v-model="saleStatusSelect"  style="width:250px" clearable>
               <el-option
                 v-for="item in saleStatusSelectList"
                 :key="item.id"
@@ -45,6 +45,7 @@
           </div>
           <el-table
             :data="tableData"
+            @selection-change="rowSelect"
             border
             style="width: 100%;"
           >
@@ -76,29 +77,24 @@
               </template>
             </el-table-column>
             <el-table-column
-              prop="code"
+              prop="productCode"
               label="型号"
               width="140">
             </el-table-column>
             <el-table-column
               prop="duration"
-              label="保修期"
-              width="140">
+              label="保修期(月)"
+              width="120">
             </el-table-column>
             <el-table-column
               prop="buyPrice"
               label="入库价格"
-              width="150">
+              width="120">
             </el-table-column>
             <el-table-column
               prop="salePrice"
               label="售价"
-              width="150">
-            </el-table-column>
-            <el-table-column
-              prop="wholesalePrice"
-              label="批发价"
-              width="150">
+              width="120">
             </el-table-column>
             <el-table-column
               prop="saleStatus"
@@ -108,7 +104,7 @@
                 <span v-for="item in saleStatusSelectList" v-if="scope.row.saleStatus==item.value">{{item.name}}</span>
               </template>
             </el-table-column>
-            <el-table-column label="操作"  width="120">
+            <el-table-column label="操作" >
               <template slot-scope="scope">
                 <el-button-group >
                   <el-button type="text" size="mini" style="width:30px" @click="toEdit(scope.row)">编辑</el-button>
@@ -154,27 +150,27 @@
             </el-select>
           </el-form-item>
           <el-form-item label="型号:"  >
-            <el-input v-model="productItem.code" style="width:250px" placeholder="请选择产品名称" >
+            <el-input v-model="productItem.productCode" style="width:250px" placeholder="请选择产品名称" >
             </el-input>
           </el-form-item>
           <el-form-item label="重量(kg):"  >
-            <el-input v-model="productItem.weight" style="width:250px" placeholder="请选择产品名称" >
-            </el-input>
+            <el-input-number v-model="productItem.weight" style="width:250px" placeholder="请选择产品名称" >
+            </el-input-number>
           </el-form-item>
           <el-form-item label="产地:"  >
             <el-input v-model="productItem.original" style="width:250px" placeholder="请选择产品名称" >
             </el-input>
           </el-form-item>
           <el-form-item label="保修期(月):"  >
-            <el-input v-model="productItem.duration" style="width:250px" placeholder="请选择产品名称" >
-            </el-input>
+            <el-input-number v-model="productItem.duration" style="width:250px" placeholder="请选择产品名称" >
+            </el-input-number>
           </el-form-item>
           <el-form-item label="售价:"  >
             <el-input v-model="productItem.salePrice" style="width:250px" placeholder="请选择产品名称" >
             </el-input>
           </el-form-item>
-          <el-form-item label="批发价:"  >
-            <el-input v-model="productItem.wholesalePrice" style="width:250px" placeholder="请选择产品名称" >
+          <el-form-item label="入库价格:"  >
+            <el-input v-model="productItem.buyPrice" style="width:250px" placeholder="请选择产品名称" >
             </el-input>
           </el-form-item>
           <el-form-item label="在售状态:"  >
@@ -197,6 +193,7 @@
      return {
        currentPage: 1,
        pageSize: 10,
+       totalRows:0,
        nameSelect:null,
        brandSelect:null,
        saleStatusSelect:null,
@@ -231,12 +228,20 @@
     methods:{
       initTable(){
         let _this = this
-        _this.$http.post('/tradease/product/page',_this.qs.stringify({
+        _this.$http.post('/product/page',_this.qs.stringify({
           currentPage:_this.currentPage,
           pageSize:_this.pageSize,
+          type:_this.productTypeSelect,
+          name:_this.nameSelect,
+          brandId:_this.brandSelect,
+          productCode:_this.codeSelect,
+          saleStatus:_this.saleStatusSelect,
         })).then(function(res){
           if(res.data.code == 0){
             _this.tableData = res.data.page.datas
+            _this.totalRows = res.data.page.total
+            _this.currentPage = res.data.page.currentPage
+            _this.pageSize = res.data.page.pageSize
           }else{
             _this.$notify.error({
               title: '错误',
@@ -247,7 +252,7 @@
       },
       findTypeTree(){
         let _this = this
-        _this.$http.post('/tradease/productModule/tree'
+        _this.$http.post('/productModule/tree'
         ).then(function(res){
           if(res.data.code == 0){
             _this.typeTree = res.data.data
@@ -264,10 +269,14 @@
         this.productItem.typeName = node.label
       },
       search(){
-
+        this.initTable()
       },
       clearSearch(){
-
+        this.productTypeSelect = null
+        this.nameSelect = ''
+        this.brandSelect = null
+        this.codeSelect = ''
+        this.saleStatusSelect = null
       },
       toEdit(row){
         this.isAdd = true
@@ -278,15 +287,51 @@
       },
       toAdd(){
         this.isAdd = true
+        this.productItem = {}
+      },
+      rowSelect(selection){
+        let _this = this
+        this.selectedIds =  []
+        if(selection.length){
+          selection.forEach(item=>{
+            _this.selectedIds.push(item.id)
+          })
+        }
       },
       toDelete(){
+        let _this = this
+        if(!_this.selectedIds.length){
+          _this.$notify.info({
+            title: '消息',
+            message:'请选择删除行！'
+          });
+          return
+        }
+        this.$confirm('确认删除吗？').then(function(){
+          _this.$http.post('/product/delete',
+            _this.qs.stringify({ids:_this.selectedIds.join(",")})
+          ).then(function(res){
+            if(res.data.code == 0){
+              _this.$notify.success({
+                title: '成功',
+                message: res.data.msg
+              });
+              _this.initTable()
+            }else{
+              _this.$notify.error({
+                title: '错误',
+                message: res.data.msg
+              });
+            }
 
+          })
+        })
       },
       addSubmit(){
         let _this = this
         let param = this.productItem
         if(param.id){
-          _this.$http.post('/tradease/product/update',_this.qs.stringify(
+          _this.$http.post('/product/update',_this.qs.stringify(
             param
           )).then(function(res){
             if(res.data.code == 0){
@@ -304,7 +349,7 @@
             }
           })
         }else{
-          _this.$http.post('/tradease/product/insert',_this.qs.stringify(
+          _this.$http.post('/product/insert',_this.qs.stringify(
             param
           )).then(function(res){
             if(res.data.code == 0){
@@ -326,7 +371,7 @@
       },
       findDic(businessModule,subjectModule,callback){
         let _this = this
-        _this.$http.post('/tradease/sysdic/dicList',_this.qs.stringify({
+        _this.$http.post('/sysdic/dicList',_this.qs.stringify({
           businessModule:businessModule,
           subjectModule:subjectModule,
         })).then(function(res){

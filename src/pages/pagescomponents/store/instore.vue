@@ -337,7 +337,7 @@
     methods:{
       initTable(){
         let _this = this
-        _this.$http.post('/tradease/inStock/page',_this.qs.stringify({
+        _this.$http.post('/inStock/page',_this.qs.stringify({
           currentPage:_this.currentPage,
           pageSize:_this.pageSize,
         })).then(function(res){
@@ -382,7 +382,7 @@
         }else{
           //alert(JSON.stringify(param))
           _this.$http({
-            url: '/tradease/inStock/insert',
+            url: '/inStock/insert',
             method: 'post',
             data: JSON.stringify(param),
             headers: {
@@ -409,7 +409,7 @@
       },
       findUserList(){
         let _this = this
-        _this.$http.post('/tradease/sys/user/userList',
+        _this.$http.post('/sys/user/userList',
           _this.qs.stringify({pageSize:10000})
         ).then(function(res){
           if(res.data.code == 0){
@@ -426,7 +426,7 @@
       findProductList(){
         let _this = this
         _this.productSelectList = []
-        _this.$http.post('/tradease/product/list'
+        _this.$http.post('/product/list'
         ).then(function(res){
           if(res.data.code == 0){
             res.data.data.forEach(item=>{
@@ -449,7 +449,7 @@
       },
       findDic(businessModule,subjectModule,callback){
         let _this = this
-        _this.$http.post('/tradease/sysdic/dicList',_this.qs.stringify({
+        _this.$http.post('/sysdic/dicList',_this.qs.stringify({
           businessModule:businessModule,
           subjectModule:subjectModule,
         })).then(function(res){

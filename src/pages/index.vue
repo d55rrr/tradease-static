@@ -14,7 +14,7 @@
         <template slot="title"><i class="el-icon-picture"></i>管理员</template>
         <el-menu-item index="2-1">个人信息</el-menu-item>
         <el-menu-item index="2-2">修改密码</el-menu-item>
-        <el-menu-item index="2-3">退出</el-menu-item>
+        <el-menu-item index="2-3" @click="loginout">退出</el-menu-item>
       </el-submenu>
       <el-color-picker v-model="color3" show-alpha style="float:right;margin-top: 20px;"  size="mini"></el-color-picker>
     </el-menu>
@@ -113,7 +113,7 @@
     methods: {
       firstMenus(){
         let _this = this
-        _this.$http.post('/tradease/system/menu/menus', _this.qs.stringify({
+        _this.$http.post('/system/menu/menus', _this.qs.stringify({
           menuType:1
         }))
           .then(function (res) {
@@ -122,7 +122,7 @@
       },
       findChildren(id){
         let _this = this
-        _this.$http.post('/tradease/system/menu/menuTree', _this.qs.stringify({
+        _this.$http.post('/system/menu/menuTree', _this.qs.stringify({
           pid:id
         }))
           .then(function (res) {
@@ -365,9 +365,9 @@
       //退出登录
       loginout () {
         let _this = this
-        _this.$http.post('/user/logout.json')
+        _this.$http.post('/sys/user/kickout')
           .then(function (res) {
-            if (res.data.resStatus == 1000) {
+            if (res.data.resStatus == 0) {
               _this.$notify({
                 title: '成功',
                 type: 'success',

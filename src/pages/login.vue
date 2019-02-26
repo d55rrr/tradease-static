@@ -1,33 +1,44 @@
 <template>
   <div id="login">
-    <div class="login_Sky_top">
-
-    </div>
-    <div class="login_Sky_foot">
-
+    <div class="login_content_logo">
+     <!-- <img src="../assets/img/logo.png" style="margin-left: 20%;width: 200px;margin-top: 30px"/>-->
     </div>
     <div class="login_content">
-      <div class="login_content_logo"></div>
-      <div class="login_content_input">
-        <input type="text" class="login_content_input_username" v-model="username" @click="username_nothing(0)"
-               value="username">
-        <input type="password" class="login_content_input_password" v-model="password" @click="username_nothing(1)"
-               value="password">
-        <div class="login_content_input_loginlostpass">
-          <input type="button" class="login_content_input_loginlostpass_loginbtn" value="登录" @click="loginSubmit">
-          <!--<input type="checkbox" class="login_content_input_loginlostpass_lostpassbtn"-->
-          <!--@change="rebnamepassFn" v-model="check"> -->
-          <el-checkbox @change="rebnamepassFn" v-model="check"><i>记住密码</i></el-checkbox>
-          <i>忘记密码？</i>
+      <div style=" width: 470px;float:right;margin-top: 5%;margin-right: 10%">
+        <div style="text-align: center;font-size: 30px;padding: 15px;color: #FFFFFF">TRADEASE PLATFORM</div>
+        <div class="login_content_input" style="display:flex;justify-content: center" >
+          <el-form style="margin:10px;width: 80%;">
+            <el-form-item >
+              <span style="font-size: 18px;">用户登录</span><span style="color:#b3b3b3">&nbsp;&nbsp;UserLogin</span>
+            </el-form-item>
+            <el-form-item>
+              <el-input  v-model="username"  >
+                <i slot="prefix" class=" icon_user_name"></i>
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-input v-model="password"   type="password" @keyup.enter.native="loginSubmit">
+                <i slot="prefix" class=" icon_user_pass"></i>
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-checkbox @change="rebnamepassFn" v-model="check">记住密码</el-checkbox>
+              <span style="float:right;">忘记密码？</span>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" style="width:100%" @click="loginSubmit">登录</el-button>
+            </el-form-item>
+          </el-form>
         </div>
       </div>
     </div>
     <div class="login_foot">
-      <div class="login_foot_loginbm">Copyright ©Hanshow. All Rights Reserved.</div>
+      <div class="login_foot_loginbm">Copyright © 2019 TRADEASE All Rights Reserved.</div>
     </div>
   </div>
 </template>
 <script>
+  import md5 from 'js-md5'
   export default {
     data () {
       return {
@@ -38,13 +49,6 @@
       }
     },
     created () {
-      let _this = this
-      document.onkeydown=function(event) {
-        let e = event || window.event || arguments.callee.caller.arguments[0];
-        if(e && e.keyCode==13){
-          _this.loginSubmit()
-        }
-      }
     },
     mounted () {
       this.showunamepasFn()
@@ -85,13 +89,7 @@
         }
       },
       loginSubmit () {
-
-        this.$router.push({
-          path: '/indexlist'
-        })
-
         let _this = this
-        console.log(_this.username, _this.password)
         if ((_this.username).trim() == '') {
           alert('用户名不可为空')
           return
@@ -101,23 +99,26 @@
           return
         }
         //登录接口
-        localStorage.setItem('username1',_this.username)
-        _this.$http.post('/user/doLogin.json', _this.qs.stringify({
-          username: _this.username,
-          password: _this.password
+        _this.$http.post('/sys/user/enterin', _this.qs.stringify({
+          code1: _this.username,
+          code2: md5(_this.password)+"tradease"
         }))
           .then(function (res) {
-            let resStatus = res.data.resStatus
-            // console.log(resStatus)
-            // console.log(res.data.params.resMsg)
-            // console.log(res.params.resMsg)
-            if (resStatus == 1000) {
-              sessionStorage.setItem('system_login_update_time',new Date().getTime())
-              _this.$router.push({
-                path: '/indexlist'
-              })
+            let resStatus = res.data.code
+            if (resStatus == 0) {
+         /*     localStorage.setItem('username1',res.data.params.username)
+              localStorage.setItem('realname',res.data.params.realname)
+              localStorage.setItem('userId',res.data.params.userId)*/
+              localStorage.setItem('system_login_update_time',new Date().getTime())
+              //若登录前路径有意义进行跳转
+//              let lastPath=sessionStorage.getItem("last_path")
+
+                _this.$router.push({
+                  path: '/salelist'
+                })
+
             } else {
-              alert(res.data.resMsg)
+              alert(JSON.stringify(res.data))
             }
 
           })
@@ -142,5 +143,13 @@
 
 <style lang="less" scoped>
   @import url("../assets/less/login.less");
+  .icon_user_name {
+    margin: 5px;
+    content: url(../assets/img/icon_account.png);
+  }
+  .icon_user_pass {
+    margin: 5px;
+    content: url(../assets/img/icon_password.png);
+  }
 </style>
 

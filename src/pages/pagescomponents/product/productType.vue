@@ -92,7 +92,7 @@
     methods:{
       initTable(){
         let _this = this
-        _this.$http.post('/tradease/productModule/tree'
+        _this.$http.post('/productModule/tree'
         ).then(function(res){
           if(res.data.code == 0){
             _this.tableData = res.data.data
@@ -118,7 +118,7 @@
       addSubmit(){
         let _this = this
         let param = this.moduleItem
-        _this.$http.post('/tradease/productModule/insert',_this.qs.stringify(
+        _this.$http.post('/productModule/insert',_this.qs.stringify(
           param
         )).then(function(res){
           if(res.data.code == 0){

@@ -277,7 +277,7 @@
     methods:{
       initTable(){
         let _this = this
-        _this.$http.post('/tradease/OutStock/page',_this.qs.stringify({
+        _this.$http.post('/OutStock/page',_this.qs.stringify({
           currentPage:_this.currentPage,
           pageSize:_this.pageSize,
         })).then(function(res){
@@ -312,7 +312,7 @@
       addSubmit(){
         let _this = this
         let param = this.storeItem
-        _this.$http.post('/tradease/OutStock/insert',_this.qs.stringify(
+        _this.$http.post('/OutStock/insert',_this.qs.stringify(
           param
         )).then(function(res){
           if(res.data.code == 0){

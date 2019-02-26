@@ -1,6 +1,6 @@
 <template>
     <div id="sysdic">
-      <el-card style="height: 600px;margin: 10px;overflow: auto">
+      <el-card style="height: 700px;margin: 10px;overflow: auto">
         <el-form ref="form"  label-width="150px" :inline="true" style="margin-top: 20px">
           <el-form-item label="模块名:"  >
             <el-select v-model="businessNameSelect" style="width:250px" placeholder="请选择产品名称" @change="findSubjectNameSelect">
@@ -66,7 +66,7 @@
               label="状态"
               width="140">
             </el-table-column>
-            <el-table-column label="操作" width="120">
+            <el-table-column label="操作" >
               <template slot-scope="scope">
                 <el-button-group >
                   <el-button type="text" size="mini" style="width:30px" @click="toEdit(scope.row)">编辑</el-button>
@@ -146,7 +146,7 @@
     methods:{
       initTable(){
         let _this = this
-        _this.$http.post('/tradease/sysdic/page',_this.qs.stringify({
+        _this.$http.post('/sysdic/page',_this.qs.stringify({
           currentPage:_this.currentPage,
           pageSize:_this.pageSize,
         })).then(function(res){
@@ -172,7 +172,7 @@
       toEdit(row){
         let _this = this
         this.isAdd = true
-        _this.$http.post('/tradease/sysdic/find',_this.qs.stringify({
+        _this.$http.post('/sysdic/find',_this.qs.stringify({
             id:row.id
         })).then(function(res){
           if(res.data.code == 0){
@@ -199,7 +199,7 @@
         let _this = this
         let param = this.dicItem
         if(this.dicItem.id){
-          _this.$http.post('/tradease/sysdic/update',_this.qs.stringify(
+          _this.$http.post('/sysdic/update',_this.qs.stringify(
             param
           )).then(function(res){
             if(res.data.code == 0){
@@ -217,7 +217,7 @@
             }
           })
         }else{
-          _this.$http.post('/tradease/sysdic/insert',_this.qs.stringify(
+          _this.$http.post('/sysdic/insert',_this.qs.stringify(
             param
           )).then(function(res){
             if(res.data.code == 0){
@@ -239,7 +239,7 @@
       },
       findSubjectNameSelect(){
         let _this = this
-        _this.$http.post('/tradease/sysdic/typeList',_this.qs.stringify({
+        _this.$http.post('/sysdic/typeList',_this.qs.stringify({
           businessModule:_this.businessNameSelect
         })).then(function(res){
           if(res.data.code == 0){
@@ -254,7 +254,7 @@
       },
       findBusinessNameSelect(name){
         let _this = this
-        _this.$http.post('/tradease/sysdic/typeList',_this.qs.stringify({
+        _this.$http.post('/sysdic/typeList',_this.qs.stringify({
           businessModule:name
         })).then(function(res){
           if(res.data.code == 0){

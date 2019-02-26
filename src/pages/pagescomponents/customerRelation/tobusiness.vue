@@ -3,19 +3,19 @@
       <el-card style="min-height: 900px;margin: 10px">
         <el-form ref="form"  label-width="150px" :inline="true">
           <el-form-item label="客户名:"  >
-            <el-input v-model="nameSelect" placeholder="请选择"  style="width:250px"></el-input>
+            <el-input v-model="nameSelect" placeholder="请选择"  style="width:250px" clearable></el-input>
           </el-form-item>
           <el-form-item label="客户等级:">
-            <el-select style="width:250px" placeholder="请选择产品品牌" v-model="brandSelect">
+            <el-select style="width:250px" placeholder="请选择产品品牌" v-model="levelSelect" clearable>
               <el-option :key="item.value" :value="item.value" :label="item.name" v-for="item in customerLevelSelectList" ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="法人:" >
-            <el-input v-model="nameSelect" placeholder="请选择"  style="width:250px">
+            <el-input v-model="representativeSelect" placeholder="请选择"  style="width:250px" clearable>
             </el-input>
           </el-form-item>
           <el-form-item label="联系人:">
-            <el-input v-model="codeSelect" style="width:250px"></el-input>
+            <el-input v-model="contactSelect" style="width:250px"></el-input>
           </el-form-item>
           <el-form-item style="margin-left:20px">
             <button type="button" class="el-button el-button--primary" @click="search"><span>查询</span></button>
@@ -78,7 +78,7 @@
               label="预存剩余"
               width="150">
             </el-table-column>
-            <el-table-column label="操作"  width="120">
+            <el-table-column label="操作" >
               <template slot-scope="scope">
                 <el-button-group >
                   <el-button type="text" size="mini" style="width:30px" @click="toEdit(scope.row)">编辑</el-button>
@@ -112,7 +112,7 @@
             <el-input v-model="customerItem.code" placeholder="请选择"  style="width:250px"></el-input>
           </el-form-item>
           <el-form-item label="客户法人:"  >
-            <el-input v-model="customerItem.representative" style="width:250px" placeholder="请选择产品名称" >
+            <el-input v-model="customerItem.representative" style="width:250px" placeholder="请选择产品名称"  clearable>
             </el-input>
           </el-form-item>
           <el-form-item label="客户电话:"  >
@@ -205,9 +205,12 @@
        nameSelect:null,
        brandSelect:null,
        saleStatusSelect:null,
+       representativeSelect:null,
+       levelSelect:null,
        codeSelect:null,
        buyDateSelect:null,
        deliveryDateSelect:null,
+       contactSelect:null,
        payStatus:null,
        serviceStatus:null,
        isAdd:false,
@@ -276,12 +279,18 @@
     methods:{
       initTable(){
         let _this = this
-        _this.$http.post('/tradease/customerb/page',_this.qs.stringify({
+        _this.$http.post('/customerb/page',_this.qs.stringify({
           currentPage:_this.currentPage,
           pageSize:_this.pageSize,
+          name:_this.nameSelect,
+          level:_this.levelSelect,
+          representative:_this.representativeSelect
         })).then(function(res){
           if(res.data.code == 0){
             _this.tableData = res.data.page.datas
+            _this.totalRows = res.data.page.total
+            _this.currentPage = res.data.page.currentPage
+            _this.pageSize = res.data.page.pageSize
           }else{
             _this.$notify.error({
               title: '错误',
@@ -291,17 +300,20 @@
         })
       },
       search(){
-
+        this.initTable()
       },
       clearSearch(){
-
+        this.nameSelect = ''
+        this.levelSelect = null
+        this.representativeSelect = ''
+        this.contactSelect = ''
       },
       toEdit(row){
         let _this = this
         this.isAdd = true
         this.isAdd = true
         this.contactsData = []
-        _this.$http.post('/tradease/customerb/find',_this.qs.stringify({
+        _this.$http.post('/customerb/find',_this.qs.stringify({
           id:row.id
         })).then(function(res){
           if(res.data.code == 0){
@@ -333,20 +345,22 @@
           });
           return
         }
-        _this.$http.post('/tradease/customerb/delete',_this.qs.stringify({
-            ids:this.selected.join(",")
-        })).then(function(res){
-          if(res.data.code == 0){
-            _this.$notify.success({
-              title: '删除成功',
-            });
-            _this.initTable()
-          }else{
-            _this.$notify.error({
-              title: '错误',
-              message: res.data.resMsg
-            });
-          }
+        this.$confirm('确认删除吗？').then(function(){
+          _this.$http.post('/customerb/delete',_this.qs.stringify({
+            ids:_this.selected.join(",")
+          })).then(function(res){
+            if(res.data.code == 0){
+              _this.$notify.success({
+                title: '删除成功',
+              });
+              _this.initTable()
+            }else{
+              _this.$notify.error({
+                title: '错误',
+                message: res.data.resMsg
+              });
+            }
+          })
         })
 
       },
@@ -356,7 +370,7 @@
         param.contacts = this.contactsData
         if(param.id){
           _this.$http({
-            url: '/tradease/customerb/update',
+            url: '/customerb/update',
             method: 'post',
             data: JSON.stringify(param),
             headers: {
@@ -380,7 +394,7 @@
           })
         }else{
           _this.$http({
-            url: '/tradease/customerb/insert',
+            url: '/customerb/insert',
             method: 'post',
             data: JSON.stringify(param),
             headers: {
@@ -421,7 +435,7 @@
       },
       findDic(businessModule,subjectModule,callback){
         let _this = this
-        _this.$http.post('/tradease/sysdic/dicList',_this.qs.stringify({
+        _this.$http.post('/sysdic/dicList',_this.qs.stringify({
           businessModule:businessModule,
           subjectModule:subjectModule,
         })).then(function(res){

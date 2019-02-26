@@ -3,34 +3,39 @@
       <el-card style="min-height: 900px;margin: 10px">
         <el-form ref="form"  label-width="150px" :inline="true">
           <el-form-item label="经销商名称:"  >
-            <el-input v-model="buyerSelect" style="width:250px" placeholder="请选择产品名称" >
-            </el-input>
+            <el-select v-model="buyerSelect" filterable clearable style="width:250px">
+              <el-option :key="item.id" :value="item.id" :label="item.name" v-for="item in customerSelecctList"></el-option>
+            </el-select>
           </el-form-item>
-          <el-form-item label="产品名:">
-            <el-input v-model="nameSelect" placeholder="请选择"  style="width:250px">
+          <el-form-item label="订单名:">
+            <el-input v-model="nameSelect" placeholder="请选择"  style="width:250px"  clearable>
             </el-input>
           </el-form-item>
           <el-form-item label="开单日期:" >
             <el-date-picker
+              clearable
               v-model="buyDateSelect"
               type="date"
               align="right"
               unlink-panels
+              value-format="yyyy-MM-dd HH:mm:ss"
               style="width:250px"
             >
             </el-date-picker>
           </el-form-item>
           <el-form-item label="送货日期:">
             <el-date-picker
+              clearable
               v-model="deliveryDateSelect"
               type="date"
               align="right"
               unlink-panels
+              value-format="yyyy-MM-dd HH:mm:ss"
               style="width:250px"
             ></el-date-picker>
           </el-form-item>
           <el-form-item label="支付状态:" >
-            <el-select v-model="payStatusSelect"  style="width:250px">
+            <el-select v-model="payStatusSelect"  style="width:250px" clearable>
               <el-option
                 v-for="item in payStatusSelectList"
                 :key="item.id"
@@ -40,7 +45,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="提货状态:">
-            <el-select v-model="serviceStatusSelect"  style="width:250px">
+            <el-select v-model="serviceStatusSelect"  style="width:250px" clearable>
               <el-option
                 v-for="item in serviceStatusSelectList"
                 :key="item.id"
@@ -62,6 +67,7 @@
           <el-table
             :data="tableData"
             border
+            @selection-change="rowSelect"
             style="width: 100%;"
           >
             <el-table-column
@@ -113,13 +119,19 @@
               prop="orderStatus"
               label="付款状态"
               width="150">
+              <template slot-scope="scope">
+                <span v-for="item in payStatusSelectList" v-if="scope.row.orderStatus==item.value">{{item.name}}</span>
+              </template>
             </el-table-column>
             <el-table-column
               prop="deliveryStatus"
               label="提货状态"
               width="150">
+              <template slot-scope="scope">
+                <span v-for="item in serviceStatusSelectList" v-if="scope.row.deliveryStatus==item.value">{{item.name}}</span>
+              </template>
             </el-table-column>
-            <el-table-column label="操作"  width="140">
+            <el-table-column label="操作"  >
               <template slot-scope="scope">
                 <el-button-group >
                   <el-button type="text" size="mini" style="width:30px" @click="toEdit(scope.row)">编辑</el-button>
@@ -313,6 +325,7 @@
         payStatusSelectList:[],
         deliveryTypeSelecctList:[],
         customerSelecctList:[],
+        selectedIds:[],
         typeTree:[],
       }
     },
@@ -334,12 +347,21 @@
     methods:{
       initTable(){
         let _this = this
-        _this.$http.post('/tradease/wholesales/page',_this.qs.stringify({
+        _this.$http.post('/wholesales/page',_this.qs.stringify({
           currentPage:_this.currentPage,
           pageSize:_this.pageSize,
+          buyer:_this.buyerSelect,
+          name:_this.nameSelect,
+          orderTime:_this.buyDateSelect,
+          deliveryTime:_this.deliveryDateSelect,
+          orderStatus:_this.payStatusSelect,
+          deliveryStatus:_this.serviceStatusSelect
         })).then(function(res){
           if(res.data.code == 0){
             _this.tableData = res.data.page.datas
+            _this.totalRows = res.data.page.total
+            _this.currentPage = res.data.page.currentPage
+            _this.pageSize = res.data.page.pageSize
           }else{
             _this.$notify.error({
               title: '错误',
@@ -350,7 +372,7 @@
       },
       findCustomerSelectList(){
         let _this = this
-        _this.$http.post('/tradease/customerb/list').then(function(res){
+        _this.$http.post('/customerb/list').then(function(res){
           if(res.data.code == 0){
            _this.customerSelecctList = res.data.data
           }else{
@@ -363,7 +385,7 @@
       },
       findTypeTree(){
         let _this = this
-        _this.$http.post('/tradease/productModule/tree'
+        _this.$http.post('/productModule/tree'
         ).then(function(res){
           if(res.data.code == 0){
             _this.typeTree = res.data.data
@@ -375,6 +397,15 @@
           }
 
         })
+      },
+      rowSelect(selection){
+        let _this = this
+        this.selectedIds =  []
+        if(selection.length){
+          selection.forEach(item=>{
+            _this.selectedIds.push(item.id)
+          })
+        }
       },
       selectProduct(productId,index){
         let _this = this
@@ -414,7 +445,7 @@
       },
       findProductList(node){
         let _this = this
-        _this.$http.post('/tradease/product/list',
+        _this.$http.post('/product/list',
           _this.qs.stringify({type:node.id})
         ).then(function(res){
           if(res.data.code == 0){
@@ -433,7 +464,7 @@
         this.isAdd = true
         this.saleItem = {totalPrice:0,realPrice:0,payed:0}
         this.products = []
-        _this.$http.post('/tradease/wholesales/find',
+        _this.$http.post('/wholesales/find',
           _this.qs.stringify({id:row.id})
         ).then(function(res){
           if(res.data.code == 0){
@@ -468,7 +499,33 @@
         this.products = []
       },
       toDelete(){
+        let _this = this
+        if(!_this.selectedIds.length){
+          _this.$notify.info({
+            title: '消息',
+            message:'请选择删除行！'
+          });
+          return
+        }
+        this.$confirm('确认删除吗？').then(function(){
+          _this.$http.post('/wholesales/delete',
+            _this.qs.stringify({ids:_this.selectedIds.join(",")})
+          ).then(function(res){
+            if(res.data.code == 0){
+              _this.$notify.success({
+                title: '成功',
+                message: res.data.msg
+              });
+              _this.initTable()
+            }else{
+              _this.$notify.error({
+                title: '错误',
+                message: res.data.msg
+              });
+            }
 
+          })
+        })
       },
       addSubmit(){
         let _this = this
@@ -476,7 +533,7 @@
         param.orderDetails = this.products
         if(param.id){
           _this.$http({
-            url: '/tradease/wholesales/update',
+            url: '/wholesales/update',
             method: 'post',
             data: JSON.stringify(param),
             headers: {
@@ -500,7 +557,7 @@
           })
         }else{
           _this.$http({
-            url: '/tradease/wholesales/insert',
+            url: '/wholesales/insert',
             method: 'post',
             data: JSON.stringify(param),
             headers: {
@@ -526,14 +583,20 @@
 
       },
       search(){
-
+        this.initTable()
       },
       clearSearch(){
+        this.buyerSelect = null
+        this.nameSelect = null
+        this.buyDateSelect = null
+        this.deliveryDateSelect = null
+        this.payStatusSelect = null
+        this.serviceStatusSelect = null
 
       },
       findDic(businessModule,subjectModule,callback){
         let _this = this
-        _this.$http.post('/tradease/sysdic/dicList',_this.qs.stringify({
+        _this.$http.post('/sysdic/dicList',_this.qs.stringify({
           businessModule:businessModule,
           subjectModule:subjectModule,
         })).then(function(res){

@@ -206,7 +206,7 @@
     methods:{
       initTable(){
         let _this = this
-        _this.$http.post('/tradease/orderBill/page',_this.qs.stringify({
+        _this.$http.post('/orderBill/page',_this.qs.stringify({
           currentPage:_this.currentPage,
           pageSize:_this.pageSize,
         })).then(function(res){
@@ -242,7 +242,7 @@
         let _this = this
         let param = this.orderItem
         alert(JSON.stringify(param))
-        _this.$http.post('/tradease/orderBill/insert',_this.qs.stringify(
+        _this.$http.post('/orderBill/insert',_this.qs.stringify(
           param
         )).then(function(res){
           if(res.data.code == 0){
